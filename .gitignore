@@ -1,0 +1,9 @@
+# PyTorch models / checkpoints
+*.pt
+*.pth
+
+# Dataset descargado para Module 4
+MarioValdovinos_Module4/data/
+
+# Artifacts generados por entrenamiento
+MarioValdovinos_Module4/artifacts/
