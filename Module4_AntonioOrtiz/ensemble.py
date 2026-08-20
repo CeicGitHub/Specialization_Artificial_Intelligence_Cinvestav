@@ -1,6 +1,16 @@
 
 #* CESAR EDUARDO INDA CENICEROS
 
+#! Resumen_Funcionalidad:
+''' este código implementa un sistema de clasificación de imágenes de prendas utilizando el conjunto de datos FashionMNIST y una red neuronal de tipo MLP. 
+--> Primero, descarga y prepara las imágenes, selecciona una muestra de 3,000 ejemplos y la divide en datos de entrenamiento y validación. 
+--> Cada imagen, originalmente de 28×28 píxeles, se convierte en un vector de 784 valores para poder ser procesada por la red neuronal.
+--> La arquitectura utilizada contiene dos capas ocultas de 512 y 256 neuronas con la función de activación ReLU, 
+--> además de una capa de salida con 10 neuronas, una por cada categoría de ropa.
+--> comprobar si la combinación de múltiples redes neuronales puede obtener una clasificación más precisa y estable que la obtenida por cada modelo individual.
+--> reducir los errores particulares de cada red y mejorar la capacidad de generalización del sistema ante imágenes que no fueron utilizadas durante el entrenamiento.
+'''
+
 import marimo
 
 __generated_with = "0.23.9"
@@ -140,6 +150,34 @@ def _(test_datset, torch, train_dataset, val_dataset):
     return (test_loader,)
 
 
+#! Esta clase si incluye "Dropout"
+@app.cell
+def _(nn):
+    class MLP(nn.Module):
+        def __init__(self, dropout_rate=0.2):
+            super(MLP, self).__init__()
+
+            self.nn = nn.Sequential(
+                nn.Flatten(),
+
+                nn.Linear(28 * 28, 512),  # nn.1
+                nn.ReLU(),
+                nn.Dropout(dropout_rate),
+
+                nn.Linear(512, 256),      # nn.4
+                nn.ReLU(),
+                nn.Dropout(dropout_rate),
+
+                nn.Linear(256, 10)        # nn.7
+            )
+
+        def forward(self, x):
+            return self.nn(x)
+
+    return (MLP,)
+
+
+""""" 
 @app.cell
 def _(nn):
     class MLP(nn.Module):
@@ -162,7 +200,7 @@ def _(nn):
             return self.nn(x)
 
     return (MLP,)
-
+"""
 
 @app.cell
 def _(device, torch):
@@ -196,11 +234,16 @@ def _(MLP, device, evaluate, nn, test_loader, torch):
     loss_fn = nn.CrossEntropyLoss()
 
     model_dirs = [
-        "runs/l2_reg_0.001_patience_5_epochs_500/model.pth",
-        "runs/l2_reg_0.0001_patience_20_epochs_500/model.pth",
-        "runs/l2_reg_0.1_patience_20_epochs_500/model.pth",
-        "runs/l2_reg_0.001_patience_10_epochs_500/model.pth",
-        "runs/l2_reg_0.001_patience_15_epochs_500/model.pth"
+        "runs/l2_reg_0.0001_patience_10_epochs_100_dropout_0.2/model.pth",
+        "runs/l2_reg_0.001_patience_10_epochs_100_dropout_0.2/model.pth",
+        "runs/l2_reg_0.001_patience_15_epochs_100_dropout_0.3/model.pth",
+        "runs/l2_reg_0.001_patience_20_epochs_100_dropout_0.1/model.pth",
+        "runs/l2_reg_0.01_patience_10_epochs_100_dropout_0.2/model.pth",
+        #"runs/l2_reg_0.001_patience_5_epochs_500/model.pth",
+        #"runs/l2_reg_0.0001_patience_20_epochs_500/model.pth",
+        #"runs/l2_reg_0.1_patience_20_epochs_500/model.pth",
+        #"runs/l2_reg_0.001_patience_10_epochs_500/model.pth",
+        #"runs/l2_reg_0.001_patience_15_epochs_500/model.pth"
     ]
     models = []
 
@@ -259,7 +302,6 @@ def _(device, models, test_loader, torch):
 @app.cell
 def _():
     return
-
 
 if __name__ == "__main__":
     app.run()

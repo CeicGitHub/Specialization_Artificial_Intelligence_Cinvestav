@@ -1,6 +1,12 @@
 
 #* CESAR EDUARDO INDA CENICEROS
 
+#! Resumen_Funcionalidad:
+''' Este programa permite estudiar cómo el Dropout, la regularización L2 y el early stopping 
+--> ayudan a obtener una red neuronal más estable y capaz de clasificar correctamente imágenes nuevas. 
+--> También permite modificar los hiperparámetros desde la línea de comandos 
+--> para comparar distintas configuraciones y seleccionar la que produzca mejores resultados.
+'''
 
 import marimo
 
@@ -171,9 +177,9 @@ def _(nn):
 @app.cell
 def _(mo):
     l2_lambda = mo.cli_args().get("l2_lambda") or 0.001
-    patience = mo.cli_args().get("patience") or 10
+    patience = mo.cli_args().get("patience") or 20
     num_epochs = mo.cli_args().get("num_epochs") or 100
-    dropout_rate = mo.cli_args().get("dropout_rate") or 0.2
+    dropout_rate = mo.cli_args().get("dropout_rate") or 0.1
     return dropout_rate, l2_lambda, num_epochs, patience
 
 
